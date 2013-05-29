@@ -1,6 +1,8 @@
 package problems81to90
 
 import io._
+import scala.io.Source
+import scala.collection.mutable.ListBuffer
 
 //In the 5 by 5 matrix below, the minimal path sum from the top left 
 //to the bottom right, by only moving to the right and down, is indicated in bold red and is equal to 2427.	
@@ -15,14 +17,25 @@ import io._
 //from the top left to the bottom right by only moving right and down.
 object Problem81 
 {
-	def main(args: Array[String]) 
-	{
-		val text = loadFile("src/resource/problem81.txt").split("\r\n").map(_.split(",").map(_.toInt))
-		
-		
-		
-		println(text.size + " " + text.head.size)
-  
-	}
+  def main(args: Array[String]) 
+  {
+     val curArray = Source.fromFile("""C:\Users\f9540702\Desktop\matrix.txt""").getLines.toIndexedSeq.map(_.split(",").map(_.toInt))
+     val maxVal = curArray.size
+     val nodeArr = curArray.flatten.map(new Node(_))
 
+     for (i <- 0 until maxVal; j <- 0 until maxVal)
+     {
+         val curNode =  nodeArr(i * maxVal + j)
+	     if (i < (maxVal - 1)) curNode.connections += nodeArr((i + 1) * maxVal + j)
+	     if (j < (maxVal - 1)) curNode.connections += nodeArr(i * maxVal + (j + 1))
+     }
+     println("weight: " + nodeArr(0).weight)
+     println("trace: " + nodeArr(0).traceNode)
+  }
+
+  class Node(val value : Int, val connections : ListBuffer[Node] = ListBuffer.empty)
+  {
+    lazy val weight : Int =  value + (if (connections.isEmpty) 0 else connections.minBy(_.weight).weight)
+    def traceNode : String = value + (if (connections.isEmpty) ""  else " -> " + connections.minBy(_.weight).traceNode)
+  }
 }
