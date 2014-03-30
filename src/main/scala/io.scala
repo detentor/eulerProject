@@ -2,6 +2,7 @@
 
 import java.io.File
 import java.io.FileInputStream
+
 package object io 
 {
 	def loadFile(fileName : String) = 
@@ -15,5 +16,4 @@ package object io
 		
 		new String(byteArr)
 	}
-
 }
