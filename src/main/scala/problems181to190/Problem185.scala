@@ -80,16 +80,21 @@ val data = dataA
   {
       val eleZero = data.find(_._2 == 0).get._1
       val resp = genTrieFast(Nil, data.filter(k => k._2 > 0), Array.fill(data(0)._1.length)(10), List(eleZero))
-      println(resp)
+      println(resp.map(_.mkString(" ")))
+      val lastNumber =  (0 to 9).toSet &~ (for (curEle <- data) yield curEle._1(12)).toSet
       
-      val mT =  (0 to 9).toSet &~ (for (curEle <- data) yield curEle._1(12)).toSet
-      
-      println(mT)
+      println(lastNumber)
   }
   
   var mCount = 0
   
   //Exclui o restante dos elementos para aqueles casos que já foi satisfeito
+  //cumulative são as dicas que já foram satisfeitos pela execução
+  //elesToSatisfy são as dicas que ainda faltam satisfazer
+  //cumArray é o array cumulativo até o momento, com as alterações que satisfazem os array anteriores
+  //zeroEles são os elementos a serem removidos das possibilidades. Como exemplo, se foram escolhidos 3 números de uma dica,
+  //isso significa que o restante dos números nas posições não podem aparecer mais (se isso acontecesse, a dica ficaria invalidada). 
+  //Por isso zeroEles guarda todos os elementos "negativos", ou seja, que não podem aparecer mais.
   def genTrieFast(cumulative : List[(IndexedSeq[Int], Int)], elesToSatisfy : IndexedSeq[(IndexedSeq[Int], Int)], cumArray : Array[Int], zeroEles : List[IndexedSeq[Int]]) : Option[Array[Int]] = 
   {
       val curEle = elesToSatisfy.head
@@ -102,7 +107,7 @@ val data = dataA
           if (satisEle.nonEmpty)
           {
               mCount += 1
-              if (mCount % 10000 == 0) println(satisEle.get.mkString("(", ",", ")"))
+              if (mCount % 100000 == 0) println(satisEle.get.mkString("(", ",", ")"))
               val otherEles = elesToSatisfy.tail
               
               if (otherEles.isEmpty)
@@ -122,7 +127,6 @@ val data = dataA
               }
           }
       }
-      
       None
   }
   
